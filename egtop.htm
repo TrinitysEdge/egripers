@@ -1,0 +1,384 @@
+
+<?php
+
+// Start_session, check if user is logged in or not, and connect to the database all in one included file
+include_once("scripts/checkuserlog.php");
+?>
+
+
+<?php
+// Initialize some vars
+$errorMsg = '';
+$email = '';
+$pass = '';
+if (isset($_POST['email'])) {
+	
+	$email = $_POST['email'];
+	$pass = $_POST['pass'];
+	$remember = $_POST['remember'];
+	$email = stripslashes($email);
+	$pass = stripslashes($pass);
+	$email = strip_tags($email);
+	$pass = strip_tags($pass);
+
+	// error handling conditional checks go here
+	if ((!$email) || (!$pass)) { 
+
+		$errorMsg = 'Please provide a valid email address and password';
+
+	} else { // Error handling is complete so process the info if no errors
+		include 'scripts/connect_to_mysql.php'; // Connect to the database
+		$email = mysql_real_escape_string($email); // After we connect, we secure the string before adding to database
+	    $pass = mysql_real_escape_string($pass); // After we connect, we secure the string before adding to database
+		$pass = md5($pass); // Add MD5 Hash to the password variable they supplied after filtering it
+		// Make the SQL query
+        $sql = mysql_query("SELECT * FROM myMembers WHERE email='$email' AND password='$pass' AND email_activated='1'"); 
+		$login_check = mysql_num_rows($sql);
+        // If login check number is greater than 0 (meaning they do exist and are activated)
+		if($login_check > 0){ 
+    			while($row = mysql_fetch_array($sql)){
+					
+					$id = $row["id"];   
+					session_register('id'); 
+					$_SESSION['id'] = $id;
+       
+					$firstname = $row["firstname"];   
+					session_register('firstname'); 
+					$_SESSION['firstname'] = $firstname;
+
+					mysql_query("UPDATE myMembers SET last_log_date=now() WHERE id='$id' LIMIT 1");
+        
+    			} // close while
+	
+    			// Remember Me Section
+    			if($remember == "yes"){
+    			    setcookie("idCookie", $id, time()+60*60*24*100, "/"); // Cookie set to expire in about 30 days
+			        setcookie("passCookie", $pass, time()+60*60*24*100, "/"); // Cookie set to expire in about 30 days
+    			} 
+    			// All good they are logged in, send them to homepage then exit script
+    			header("location: egindex.php"); 
+    			exit();
+	
+		} else { // Run this code if login_check is equal to 0 meaning they do not exist
+		    $errorMsg = "Incorrect info, try again";
+		}
+
+
+    } // Close else after error checks
+
+} //Close if (isset ($_POST['uname'])){
+
+?>
+
+
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<meta name="Description" content="Put your website description here" />
+<meta name="Keywords" content="Place keywords here" />
+<title>eGripes - Let your voice be heard</title>
+<link rel="icon" href="favicon.ico" type="image/x-icon" />
+<link href="styleTP/main.css" rel="stylesheet" type="text/css" />
+
+
+
+<script src="js/jquery-1.4.2.js" type="text/javascript"></script>
+</head>
+<body>
+<?php include_once "header_template.php"; ?>
+
+<table width="160" border="0" style="background-color; border:#999 1px solid;" align="center" cellpadding="0" cellspacing="0">
+  <tr>
+
+    
+  </tr>
+</table>
+<?php include_once "footer_template.php"; ?>
+<tr bgcolor="#">
+<td height="36" colspan="4" nowrap="NOWRAP" class="navText" id="navigation">
+&nbsp;&nbsp;&nbsp;
+<p></tr>
+<tr bgcolor="#">
+  </p>
+  </td>
+</tr>
+
+<table width="" border="5" style="background-color:#fff; border:#999 1px solid;" align="center" cellpadding="0" cellspacing="0">
+<tr>
+<td width="1024">
+
+<table width="712" height="175" align="center" cellpadding="" style="margin:auto; width:900px; height:190px; background-image:url(styleTP/headerBG.jpg); background-repeat:no-repeat;">
+
+ 
+ 
+<td width="706" height="142"><form action="login.php" method="post" enctype="multipart/form-data" name="loginform" id="signinform"> 
+ 
+  <tr> </tr>
+  <tr>
+    <td height="" colspan="2" valign="TOP"><div class="headerBtns"> 
+      <div align="left"
+	  ><a class="five" href="http://www.eGripes.com/egindex.php">Home</a>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <a  class="five" href="http://www.eGripes.com/egr.php">Register</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a class="five" href="http://www.eGripes.com/"egtop.php">Topics</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a class="five" href="eGchat.html" target="_blank">Chat</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a class="five" href="eGforum.html" target="_blank">Forum</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="style7  style20">|</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a class="ten" href="http://www.eGripes.com/eglogin.php">Log In</a> </div>
+    </div></td>
+  </tr>
+</table>
+  </p>
+ 
+ 
+ <p><table width="100%" border="0" cellspacing="0" cellpadding="5">
+  <tr bgcolor="#000">
+    <td width="158"><div align="center"><a class="six" href="../eG.com/relationships.htm" target="_blank">Relationships</a></div></td>
+    <td width="133"><div align="center"><a class="six" href="../eG.com/family.htm" target="_blank">Family</a></div></td>
+    <td width="132"><div align="center"><a class="six" href="../eG.com/worldissues.htm" target="_blank">World Issues</a></div></td>
+    <td width="186"><div align="center"><a class="six" href="../eG.com/foodplaces.htm" target="_blank">Food Places</a></div></td>
+    <td width="162"><div align="center"><a class="six" href="../eG.com/education.htm" target="_blank">Education</a></div></td>
+    <td width="158"><div align="center"><a class="six" href="../eG.com/music.htm" target="_blank">Music</a></div></td>
+  </tr>
+  <td align="center" valign="top" class="logo style35"><ul>
+    <p></p>
+    <p><a class="seven" href="../eG.com/eGsingle.html" target="_blank">Single</a></p>
+    <p><a class="seven" href="../eG.com/eGmarriage.html" target="_blank">Married</a></p>
+    <p><a class="seven" href="../eG.com/eGdivorce.html" target="_blank">Divorce</a></p>
+    <p><a class="seven" href="../eG.com/eGheterosexualdating.html" target="_blank">Heterosexual Dating</a></p>
+    <p><a class="seven" href="../eG.com/eGhomosexualdating.html" target="_blank">Homosexual Dating</a></p>
+    <p><a class="seven" href="../eG.com/eGswingers.html" target="_blank">Swingers</a></p>
+	<p><a class="seven" href="../eG.com/eGrelationshipother.html" target="_blank">Other</a></p>
+  
+  </ul></td>
+      
+	  <td align="center" valign="top" class="logo style35"><ul>
+         
+	<p><a class="seven" href="../eG.com/eGimmediate.html" target="_blank">Immediate</a></p>
+    <p><a class="seven" href="../eG.com/eGdistant.html" target="_blank">Distant</a></p>
+    <p><a class="seven" href="../eG.com/eGstepfamily.html" target="_blank">Step Family</a></p>
+    <p><a class="seven" href="../eG.com/eGlowerclass.html" target="_blank">Lower Class</a></p>
+    <p><a class="seven" href="../eG.com/eGmiddleclass.html" target="_blank">Middle Class</a></p>
+	<p><a class="seven" href="../eG.com/eGupperclass.html" target="_blank">Upper Class</a></p>
+    <p><a class="seven" href="../eG.com/eGfamilyother.html" target="_blank">Other</a></p>
+	  </ul></td>
+    <td align="center" valign="top" class="logo style35"><ul>
+          <p><a class="seven" href="../eG.com/eGwar.html" target="_blank">War</a></p>
+          <p><a class="seven" href="../eG.com/eGpolitics.html" target="_blank">Politics</a></p>
+          <p><a class="seven" href="../eG.com/eGeconomy.html" target="_blank">Economy</a></p>
+          <p><a class="seven" href="../eG.com/eGracism.html" target="_blank">Racism</a></p>
+          <p><a class="seven" href="../eG.com/eGnaturaldisaster.html" target="_blank">Natural Disaster</a></p>
+      	  <p><a class="seven" href="../eG.com/eGhomepage.html" target="_blank">Health Care</a></p>
+          <p><a class="seven" href="../eG.com/eGworldissueother.html" target="_blank">Other</a></p>
+    </ul></td>
+    
+	
+	<td align="center" valign="top" class="logo style35"><ul>
+         
+	<p><a class="seven" href="../eG.com/eGfastfood.html" target="_blank">Fast Food</a></p>
+    <p><a class="seven" href="../eG.com/eGmarket.html" target="_blank">Food Markets</a></p>
+	<p><a class="seven" href="../eG.com/eGresturant.html" target="_blank">Resturants</a></p>
+    <p><a class="seven" href="../eG.com/eGLNF.html" target="_blank">Local neighborhood Food </a></p>
+	<p><a class="seven" href="../eG.com/eGfoodeateryother.html" target="_blank">Other</a></p>
+    </ul></td>
+    <td align="center" valign="top" class="logo style35"><ul>
+          
+      <p><a class="seven" href="../eG.com/eGyouthschool.html" target="_blank">Youth School</a></p>
+      <p><a class="seven" href="../eG.com/eGhighschool.html" target="_blank">High School</a></p>
+      <p><a class="seven" href="../eG.com/eGcollege.html" target="_blank">College</a></p>
+      <p><a class="seven" href="../eG.com/eGtechvocational.html" target="_blank">Technical / Vocational</a></p>
+      <p><a class="seven" href="../eG.com/eGhomeschool.html" target="_blank">Home School</a></p
+      ><p><a class="seven" href="../eG.com/eGesother.html" target="_blank">Other</a></p>
+    </ul></td>
+    
+	
+	<td align="center" valign="top" class="logo style35"><ul>
+          
+      <p><a class="seven" href="../eG.com/eGcountry.html" target="_blank">Country</a></p>
+
+      <p><a class="seven" href="../eG.com/eGjazz.html" target="_blank">Jazz</a></p>
+      <p><a class="seven" href="../eG.com/eGgospel.html" target="_blank">Gospel</a></p>
+      <p><a class="seven" href="../eG.com/eGrockroll.html" target="_blank">Rock-Roll</a></p>
+      <p><a class="seven" href="../eG.com/eGhiphop.html" target="_blank">Hip-Hop</a></p>
+      <p><a class="seven" href="../eG.com/eGmusicother.html" target="_blank">Other</a></p>
+	  </ul></td>
+
+ 
+ 
+ 
+  </tr>
+  <tr bgcolor="#000">
+    <td width="158"><div align="center"><a class="six" href="../eG.com/worldplaces.htm" target="_blank">World Places</a> </div></td>
+    <td><div align="center"><a class="six" href="../eG.com/people.htm" target="_blank">People</a></div></td>
+    <td><div align="center"><a class="six" href="../eG.com/pets.html" target="_blank">Pets</a></div></td>
+    <td><div align="center"><a class="six" href="../eG.com/televisionprograms.htm" target="_blank">Television Programs</a></div></td>
+    <td><div align="center"><a class="six" href="../eG.com/vehicles.htm" target="_blank">Vehicles</a></div></td>
+    <td><div align="center"><a class="six" href="../eG.com/movie.html" target="_blank">Movies</a></div></td>
+  </tr>
+  <td align="center" valign="top" class="logo style35"><ul>
+    
+	<p><a class="seven" href="../eG.com/eGvacation.html" target="_blank">Vacation</a></p>
+    <p><a class="seven" href="../eG.com/eGtourism.html" target="_blank">Tour sites / tourism</a></p>
+    <p><a class="seven" href="../eG.com/eGfwc.html" target="_blank">Famous World Cities</a></p>
+    <p><a class="seven" href="../eG.com/eGcountries.html" target="_blank">Countries</a></p>
+    <p><a class="seven" href="../eG.com/eGcontinent.html" target="_blank">Continents</a></p>
+    <p><a class="seven" href="../eG.com/eGworldplacesother.html" target="_blank">Other</a></p>
+  </ul></td>
+      
+	  <td align="center" valign="top" class="logo style35"><ul>
+         
+	<p><a class="seven" href="../eG.com/eGaf.html" target="_blank">Authority Figures</a></p>
+    <p><a class="seven" href="../eG.com/eGet.html" target="_blank">Entertainers</a></p>
+    <p><a class="seven" href="../eG.com/eGmoviestar.html" target="_blank">Movie Stars</a></p>
+    <p><a class="seven" href="../eG.com/eGwf.html" target="_blank">World Figures</a></p>
+    <p><a class="seven" href="../eG.com/eGlf.html" target="_blank">Life Figures</a></p>
+    <p><a class="seven" href="../eG.com/eGpeopleother.html" target="_blank">Other</a></p>
+   </ul></td>
+   
+   <td width="132" align="center" valign="top" class="logo style35"><ul>
+         
+      <p><a class="seven" href="../eG.com/eGcats.html" target="_blank">Cats</a></p>
+      <p><a class="seven" href="../eG.com/eGdogs.html" target="_blank">Dogs</a></p>
+      <p><a class="seven" href="../eG.com/eGaquatic.html" target="_blank">Aquatic</a></p>
+      <p><a class="seven" href="../eG.com/eGreptiles.html" target="_blank">Reptiles</a></p>
+      <p><a class="seven" href="../eG.com/eGexotic.html" target="_blank">Exotic</a></p>
+      <p><a class="seven" href="../eG.com/eGlivestock.html" target="_blank">Livestock</a></p>
+      <p><a class="seven" href="../eG.com/eGpetsother.html" target="_blank">Other</a></p>
+    </ul></td>
+    
+	<td width="186" align="center" valign="top" class="logo style35"><ul>
+         
+      <p><a class="seven" href="../eG.com/eGtshows.html" target="_blank">Talk Shows</a></p>
+      <p><a class="seven" href="../eG.com/eGrealitytvshows.html" target="_blank">Reality TV</a></p>
+      <p><a class="seven" href="../eG.com/eGgs.html" target="_blank">Game Shows</a></p>
+      <p><a class="seven" href="../eG.com/eGchtvshows.html" target="_blank">Chidren's TV </a></p>
+      <p><a class="seven" href="../eG.com/eGtvother.html" target="_blank">Other</a></p>
+    
+	</ul></td>
+    
+	<td width="162" align="center" valign="top" class="logo style35"><ul>
+          
+      <p><a class="seven" href="../eG.com/eGcars.html" target="_blank">Cars</a></p>
+      <p><a class="seven" href="../eG.com/eGtrucks.html" target="_blank">Trucks</a></p>
+      <p><a class="seven" href="../eG.com/eGmotorcycles.html" target="_blank">Motorcycles</a></p>
+      <p><a class="seven" href="../eG.com/eGboats.html" target="_blank">Boats</a></p>
+      <p><a class="seven" href="../eG.com/eGatvs.html" target="_blank">ATV's</a></p>
+      <p><a class="seven" href="../eG.com/eGvehicleother.html" target="_blank">Other</a></p>
+   </ul></td>
+    
+	<td width="158" align="center" valign="top" class="logo style35"><ul>
+          
+      <p><a class="seven" href="../eG.com/eGaction.html" target="_blank">Action</a></p>
+      <p><a class="seven" href="../eG.com/eGcomedy.html" target="_blank">Comedy</a></p>
+   	  <p><a class="seven" href="../eG.com/eGdrama.html" target="_blank">Drama</a></p>
+      <p><a class="seven" href="../eG.com/eGhorror.html" target="_blank">Horror</a></p>
+      <p><a class="seven" href="../eG.com/eGwestern.html" target="_blank">Western</a></p>
+      <p><a class="seven" href="../eG.com/eGmovieother.html" target="_blank">Other</a></p>
+	</ul></td>
+
+ 
+  </tr>
+  <tr>
+    <td></td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr bgcolor="#000">
+    <td width="158"><div align="center"><a class="six" href="../eG.com/sports.html" target="_blank">Sports</a></div></td>
+    <td><div align="center"><a class="six" href="../eG.com/government.html" target="_blank">Government</a></div></td>
+    <td><div align="center"><a class="six" href="../eG.com/computer.html" target="_blank">Computer</a></div></td>
+    <td><div align="center"><a class="six" href="../eG.com/drugs.html" target="_blank">Drugs</a></div></td>
+    <td><div align="center"><a class="six" href="../eG.com/publictransportation.html" target="_blank">Public Transportation</a></div></td>
+    <td><div align="center"><a class="six" href="../eG.com/miscellaneous.html" target="_blank">Miscellaneous</a> </div></td>
+  </tr>
+
+    <td align="center" valign="top" class="logo style35"><ul>
+      
+      <p><a class="seven" href="../eG.com/eGdomestic.html" target="_blank">Domestic</a></p>
+      <p><a class="seven" href="../eG.com/eGinternational.html" target="_blank">International</a></p>
+      <p><a class="seven" href="../eG.com/eGrules.html" target="_blank">Rules</a></p>
+      <p><a class="seven" href="../eG.com/eGplayers.html" target="_blank">Players</a></p>
+      <p><a class="seven" href="../eG.com/eGsportsother.html" target="_blank">Other</a></p>
+    
+	</ul></td>
+   
+   <td align="center" valign="top" class="logo style35"><ul>
+      
+      <p><a class="seven" href="../eG.com/eGcommunism.html" target="_blank">Communism</a></p>
+      <p><a class="seven" href="../eG.com/eGdemocracy.html" target="_blank">Democracy</a></p>
+   	  <p><a class="seven" href="../eG.com/eGdictatorship.html" target="_blank">Dictatorship</a></p>
+      <p><a class="seven" href="../eG.com/eGparliment.html" target="_blank">Parliment</a></p>
+      <p><a class="seven" href="../eG.com/eGmonarchy.html" target="_blank">Monarchy</a></p>
+      <p><a class="seven" href="../eG.com/eGtheocracy.html" target="_blank">Theocracy</a></p>
+      <p><a class="seven" href="../eG.com/eGgovernmentother.html" target="_blank">Other</a></p>
+    
+	</ul></td>
+    
+	<td align="center" valign="top" class="logo style35"><ul>
+      
+      <p><a class="seven" href="../eG.com/eGbrands.html" target="_blank">????</a></p>
+      <p><a class="seven" href="../eG.com/eGprograms.html" target="_blank">Programs</a></p>
+      <p><a class="seven" href="../eG.com/eGinternet.html" target="_blank">Internet</a></p>
+      <p><a class="seven" href="../eG.com/eGparts.html" target="_blank">????</a></p>
+      <p><a class="seven" href="../eG.com/eGwebsites.html" target="_blank">Websites</a></p>
+      <p><a class="seven" href="../eG.com/eGcpother.html" target="_blank">Other</a></p>
+    
+	</ul></td>
+    
+	<td align="center" valign="top" class="logo style35"><ul>
+      
+      <p><a class="seven" href="../eG.com/eGalcohol.html" target="_blank">Alcohol</a></p>
+      <p><a class="seven" href="../eG.com/eGcigarettes.html" target="_blank">Cigarettes</a></p>
+      <p><a class="seven" href="../eG.com/eGprescription.html" target="_blank">Prescription</a></p>
+      <p><a class="seven" href="../eG.com/eGillegal.html" target="_blank">Illegal</a></p>
+	  <p><a class="seven" href="../eG.com/eGdprograms.html" target="_blank">Programs</a></p>
+      <p><a class="seven" href="../eG.com/eGaddiction.html" target="_blank">Addiction</a></p>
+      <p><a class="seven" href="../eG.com/eGdrugother.html" target="_blank">Other</a></p>
+    </ul></td>
+    <td align="center" valign="top" class="logo style35"><ul>
+      
+      <p><a class="seven" href="../eG.com/eGairplanes.html" target="_blank">Airplanes</a></p>
+      <p><a class="seven" href="../eG.com/eGtaxicabs.html" target="_blank">Taxicab</a></p>
+      <p><a class="seven" href="../eG.com/eGbus.html" target="_blank">Bus</a></p>
+      <p><a class="seven" href="../eG.com/eGrt.html" target="_blank">Rapid Transit</a></p>
+      <p><a class="seven" href="../eG.com/eGprt.html" target="_blank">Passenger Rail Train</a></li>
+      <P><a class="seven" href="../eG.com/eGptother.html" target="_blank">Other</a></p>
+    </ul></td>
+    
+	<td width="158" align="center" valign="top" class="logo style35"><ul>
+    
+      <p><a class="seven" href="../eG.com/eGcrime.html" target="_blank">Crime</a></p>
+      <p><a class="seven" href="../eG.com/eGphobia.html" target="_blank">Phobias</a></p>
+      <p><a class="seven" href="../eG.com/eGoppositesex.html" target="_blank">The Opposite Sex</a></p>
+      <p><a class="seven" href="../eG.com/eGbodyreconstruction.html" target="_blank">Body Reconstruction</a></p>
+      <p><a class="seven" href="../eG.com/eGdv.html" target="_blank">Domestic Violence</a></p>
+      <p><a class="seven" href="../eG.com/eG???.html" target="_blank">???</a></p>
+      <p><a class="seven" href="../eG.com/eGmiscother.html" target="_blank">Other</a></p>
+    </ul></td>
+  </tr>
+  <tr>
+    <td valign="top" height="75 class=""></td>
+  </tr>
+ 
+</table>
+ </p> 
+ 
+ <p>&nbsp;</p>
+  <td width="94" valign="top"><?php include_once "right_AD_template.php"; ?></td>
+<tr>
+  <td>
+ 
+ 
+</tr>
+</table>
+<?php include_once "footer_template.php"; ?>
+ <table style="background-color:#fff" width="100%" border"5" cellpadding="6">
+<tr bgcolor="000">
+
+
+<td height="37" class="style8 style13">&nbsp;&nbsp;&nbsp;&nbsp;
+<a class="five" href="file:///C|/Users/DaleWilson/Desktop/EXsite/About us.html" target="_blank">About eG</a>&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;<a class="five" href="file:///C|/Users/DaleWilson/Desktop/EXsite/eGripes Topics" target="_blank">eG Topics</a></b>&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;<a class="five" href="file:///C|/Users/DaleWilson/Desktop/EXsite/eGripesTerms.html" target="_blank">eG Terms</a></b>&nbsp;&nbsp;&nbsp;&nbsp;| &nbsp;&nbsp;&nbsp;&nbsp;
+<a class="one" href="file:///C|/Users/DaleWilson/Desktop/EXsite/privatepolicy.htm" target="_blank">eG Privacy</a>&nbsp;&nbsp;&nbsp;&nbsp;| <span class="style3">&nbsp;&nbsp;&nbsp;</span>&nbsp; 
+<span class="style19">Copyright &copy;</span><?php echo date("Y"); ?>&nbsp;<?php echo str_replace("www.", "", $_SERVER['HTTP_HOST']); ?>
+</table>
+</html>

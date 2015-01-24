@@ -1,0 +1,34 @@
+﻿body {
+}
+#topHeader{
+    height: 50px;
+    background-color: gray;
+    color:white;
+    border-radius:20px;
+}
+#topHeader div{
+
+}
+.headerItem{
+    margin-top:10px;
+}
+#topHeaderLeft{
+    float:left;
+    margin-left:20px;
+}
+#topHeaderRight{
+    float:right;
+    margin-right:20px;
+}
+#headerLoginRegister{
+    margin-right: 60px;
+}
+#bodyLeft{
+    float:left;
+}
+#bodyRight{
+    float:right;
+}
+.hidden{
+    display:none;
+}
