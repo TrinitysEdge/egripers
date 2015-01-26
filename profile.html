@@ -5,7 +5,7 @@
     <meta name="Description" content="eGripers profile" />
     <meta name="Keywords" content="eGripers" />
     <meta name="rating" content="General" />
-    <title>Profile | eGripers.com</title>
+    <title>Profile | eGripers.com | Let your voice be heard!</title>
     <link type="image/x-icon" rel="icon" href="images/favicon.ico" />
     <link rel="shortcut icon" href=images/favicon.ico" type="image/x-icon" />
     <link rel="stylesheet" type="text/css" href="assets/css/style.css" />
@@ -14,7 +14,7 @@
 <body>
     <!-- <?php include'includes/header.php' ?> -->
     <div id="topHeader">
-        <div class="headerItem" id="topHeaderLeft" style="font-size:2em;text-shadow:3px 1px 1px black;"><span style="color:red;">e</span><span style="color:blue;">G</span>ripers</div>
+        <div class="headerItem" id="topHeaderLeft"><img src="images/eGripersBanner.png" /></div>
         <div class="headerItem" id="topHeaderRight">
             <div id="headerLoginRegister"><a href="#" onclick="displayLoginHeader();">Login/Register</a></div>
             <div id="headerHiddenLogin" class="hidden">
@@ -29,7 +29,25 @@
     </div>
 
     <div id="profileBody">
+        <div class="left" id="profileLeft">
+            <!-- Split Profile Widget -->
+            <div id="profileSplit">
+                <div class="left" id="profileMenu">
+                    <ul>
+                        <li><a href="#">Add Photos</a></li>
+                        <li><a href="#">Add Videos</a></li>
+                        <li><a href="#">Edit Profile</a></li>
+                    </ul>
+                </div>
+                <div class="right" id="profilePagePic">
+                    <img src="images/maxFYM.png" />
+                </div>
+            </div>
+            <!-- /Split Profile Widget -->
+        </div>
+        <div class="right" id="profileRight">
 
+        </div>
     </div>
     <?php include'includes/footer.php' ?>
     <div id="footer">
