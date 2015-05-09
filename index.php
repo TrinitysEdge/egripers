@@ -63,7 +63,7 @@
         <div class="col-xs-12 col-sm-6" id="mainBodyRight">
             <div class="squareImage" id="indexPicture">
                 <div id="indexFlavour">
-                    <h4>A place dedicated to giving you a voice. With that voice, you can change your situation, your environment, and even the world! eGripers is created with your voice in mind.</h4>
+                    <h4>GG A place dedicated to giving you a voice. With that voice, you can change your situation, your environment, and even the world! eGripers is created with your voice in mind.</h4>
                 </div>
             </div>
         </div>
